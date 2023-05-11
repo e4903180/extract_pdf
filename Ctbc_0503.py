@@ -32,7 +32,6 @@ class Ctbc(Adviser):
             self.advisor = 'Ctbc'
             text_check_report = text_check_source
             self.check_report(page, rect, text_check_report)
-        
     
     def check_report(self, page, rect, text_check_report):
         if '個股報告' in text_check_report:
@@ -73,6 +72,114 @@ class Ctbc(Adviser):
         clip_new_version_2 = fitz.Rect(350, 115, 570, 200)
         text_new_version_1 = page.get_text(clip=clip_new_version_2, sort=True).strip()
         self.rating_2 = text_new_version_1.split('\n')[0].strip()
+
+    def get_target_price_old_version_1(self, page):
+        clip_old_version_1 = fitz.Rect(130, 100, 200, 160)
+        text_old_version_1 = page.get_text(clip=clip_old_version_1, sort=True).strip()
+        try:
+            text_old_version_1 = text_old_version_1.split('NT$')[1].strip()
+            self.tp_1 = text_old_version_1.split('\n')[0].strip()
+        except:
+            self.tp_1 = 'NULL'
+    
+    def get_target_price_old_version_2(self, page):
+        clip_old_version_2 = fitz.Rect(130, 140, 200, 160)
+        text_old_version_2 = page.get_text(clip=clip_old_version_2).strip()
+        try:
+            text_old_version_2 = text_old_version_2.split('NT$')[1].strip()
+            self.tp_2 = text_old_version_2.split('\n')[0].strip()
+        except:
+            self.tp_2 = 'NULL'
+    
+    def get_target_price_new_version_1(self, page):
+        clip_new_version_1 = fitz.Rect(115, 0, 200, 300)
+        text_new_version_1 = page.get_text(clip=clip_new_version_1, sort=True).strip()
+        try:
+            text_new_version_1 = text_new_version_1.split('NT$')[1].strip()
+            self.tp_1 = text_new_version_1.split('\n')[0].strip()
+        except:
+            self.tp_1 = 'NULL'
+    
+    def get_target_price_new_version_2(self, page):
+        clip_new_version_2 = fitz.Rect(115, 235, 200, 270)
+        text_new_version_2 = page.get_text(clip=clip_new_version_2, sort=True).strip()
+        try:
+            text_new_version_2 = text_new_version_2.split('NT$')[1].strip()
+            self.tp_2 = text_new_version_2.split('\n')[0].strip()
+        except:
+            self.tp_2 = 'NULL'
+
+    def get_author_old_version_1(self, page, rect):
+        clip_old_version_1 = fitz.Rect(0, 700, 200, rect.height)
+        text_old_version_1 = page.get_text(clip=clip_old_version_1, sort=True).strip()
+        try:
+            text_old_version_1 = text_old_version_1.split('詳見最後頁聲明')[0].strip()
+            self.author_1 = text_old_version_1.split(' ')[0].strip()
+        except:
+            self.author_1 = 'NULL'
+    
+    def get_author_old_version_2(self, page):
+        clip_old_version_2 = fitz.Rect(0, 700, 200, 780)
+        text_old_version_2 = page.get_text(clip=clip_old_version_2).strip()
+        try:
+            self.author_2 = text_old_version_2.split(' ')[0].strip()
+        except:
+            self.author_2 = 'NULL'
+
+    def get_author_new_version_1(self, page, rect):
+        clip_new_version_1 = fitz.Rect(0, 700, 200, rect.height)
+        text_new_version_1 = page.get_text(clip=clip_new_version_1, sort=True).strip()
+        try:
+            text_new_version_1 = text_new_version_1.split('永豐證券投資顧問股份有限公司')[0].strip()
+            self.author_1 = text_new_version_1.split(' ')[0].strip()
+        except:
+            self.author_1 = None
+    
+    def get_author_new_version_2(self, page):
+        clip_new_version_2 = fitz.Rect(0, 700, 200, 780)
+        text_new_version_2 = page.get_text(clip=clip_new_version_2).strip()
+        try:
+            self.author_2 = text_new_version_2.split(' ')[0].strip()
+        except:
+            self.author_2 = None
+
+    def get_summary_old_version_1(self, page, rect):
+        clip_old_version_1 = fitz.Rect(0, 0, rect.width, 170)
+        text_old_version_1 = page.get_text(clip=clip_old_version_1, sort=True).strip()
+        try:
+            text_old_version_1 = text_old_version_1.split('目標價')[1].strip()
+            self.summary_1 = text_old_version_1.split('\n')[0].strip()
+        except:
+            self.summary_1 = 'NULL'
+
+    def get_summary_old_version_2(self, page):
+        clip_old_version_2 = fitz.Rect(220, 125, 550, 155)
+        text_old_version_2 = page.get_text(clip=clip_old_version_2).strip()
+        try:
+            self.summary_2 = text_old_version_2.split('\n')[0].strip()
+        except:
+            self.summary_2 = 'NULL'
+
+    def get_summary_new_version_1(self, page, rect):
+        clip_new_version_1 = fitz.Rect(200, 170, rect.width, 250)
+        text_new_version_1 = page.get_text(clip=clip_new_version_1, sort=True).strip()
+        try:
+            text_new_version_1 = text_new_version_1.split(')')[1].strip()
+            self.summary_1 = text_new_version_1.split('\n')[0].strip()
+        except:
+            self.summary_1 = None
+
+    def get_summary_new_version_2(self, page):
+        clip_new_version_2 = fitz.Rect(200, 200, 560, 250)
+        text_new_version_2 = page.get_text(clip=clip_new_version_2).strip()
+        try:
+            self.summary_2 = text_new_version_2.split('\n')[0].strip()
+        except:
+            self.summary_2 = None
+
+
+
+
 
 
 if __name__ == '__main__' :

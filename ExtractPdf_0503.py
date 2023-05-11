@@ -19,6 +19,10 @@ class ExtractPdf(object):
         self.advisor = 'Unknown'
         self.tp_1 = 'NULL'
         self.tp_2 = 'NULL'
+        self.author_1 = 'NULL'
+        self.author_2 = 'NULL'
+        self.summary_1 = 'NULL'
+        self.summary_2 = 'NULL'
 
     def check_rating(self, rating_1, rating_2, possible_rating):
         '''Check that the extracted ratings are correct
@@ -43,10 +47,44 @@ class ExtractPdf(object):
         '''
         if tp_1 == tp_2:
             return tp_1
-        else :
+        elif tp_1 != 'NULL' and tp_2 == 'NULL':
+            return tp_1
+        elif tp_2 != 'NULL' and tp_1 == 'NULL':
+            return tp_2
+        else:
             return 'NULL'
 
+    def check_author(self, author_1, author_2):
+        '''Check that the extracted target_price are correct
 
+            Return :
+                tp : (str) recommend target price
+        '''
+        if author_1 == author_2:
+            return author_1
+        elif author_1 != 'NULL' and author_2 == 'NULL':
+            return author_1
+        elif author_2 != 'NULL' and author_1 == 'NULL':
+            return author_2
+        else:
+            return 'NULL'
+
+    def check_summary(self, summary_1, summary_2):
+        '''Check that the extracted target_price are correct
+
+            Return :
+                tp : (str) recommend target price
+        '''
+        if summary_1 == summary_2:
+            return summary_1
+        elif summary_1 != 'NULL' and summary_2 == 'NULL':
+            return summary_1
+        elif summary_2 != 'NULL' and summary_1 == 'NULL':
+            return summary_2
+        else:
+            return 'NULL'   
+    
+    
 class Adviser(ExtractPdf):
     '''Extracts pdf's adviser'''
     def __init__(self, file_path):
