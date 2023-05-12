@@ -1,6 +1,4 @@
-from tqdm import tqdm
-import fitz
-
+from abc import abstractmethod
 
 class ExtractPdf(object):
     '''Extracts pdf's informations'''
@@ -90,6 +88,21 @@ class Adviser(ExtractPdf):
     def __init__(self, file_path):
         super().__init__(file_path)
 
+    @abstractmethod
+    def get_rating_process(self):
+        raise NotImplementedError("get_rating_process not implement")
+
+    @abstractmethod
+    def get_target_price_process(self):
+        raise NotImplementedError("get_target_price_process not implement")
+
+    @abstractmethod
+    def get_author_process(self):
+        raise NotImplementedError("get_author_process not implement")
+
+    @abstractmethod
+    def get_summary_process(self):
+        raise NotImplementedError("get_summary_process not implement")
 
 if __name__ == '__main__' :
     pass
