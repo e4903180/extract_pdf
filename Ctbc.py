@@ -1,10 +1,10 @@
 from tqdm import tqdm
 import fitz
-from ExtractPdf_0503 import *
+from ExtractPdf import *
 import os
 
-class Sinopac(Adviser):
-    '''Handle 永豐投顧(SinoPac) pdf
+class Ctbc(Adviser):
+    '''Handle 中信託(CTBC) pdf
 
         Args :
             directory_path : (str) pdf path
@@ -14,116 +14,64 @@ class Sinopac(Adviser):
     '''
     def __init__(self, file_path):
         super().__init__(file_path)
-        self.file_path = file_path
-        self.possible_rating = ['買進', '中立']
+        self.possible_rating = ['中立', '買進', '增加持股(Overweight)', '中立(Neutral)', 
+                              '買進(Buy)', '增加持股', '-', '降低持股(Underweight)', '未評等']
 
     def get_rating_process(self):
         with fitz.open(self.file_path) as doc:
             page = doc.load_page(0)
             rect = page.rect
-            if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
-                self.get_rating_old_version_1(page)
-                self.get_rating_old_version_2(page)
-            elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
-                clip_check_report = fitz.Rect(0, 0, rect.width, 150)
-                text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
-                if self.check_report(text_check_report):
-                    self.get_rating_new_version_1(page)
-                    self.get_rating_new_version_2(page)
+            self.check_source(doc, page, rect)
         return self.check_rating(self.rating_1, self.rating_2, self.possible_rating)
 
-    def get_target_price_process(self):
-        with fitz.open(self.file_path) as doc:
-            page = doc.load_page(0)
-            rect = page.rect
-            if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
-                self.get_target_price_old_version_1(page)
-                self.get_target_price_old_version_2(page)
-            elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
-                clip_check_report = fitz.Rect(0, 0, rect.width, 150)
-                text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
-                if self.check_report(text_check_report):
-                    self.get_target_price_new_version_1(page)
-                    self.get_target_price_new_version_2(page)
-        return self.check_targrt_price(self.tp_1, self.tp_2)
-    
-    def get_author_process(self):
-        with fitz.open(self.file_path) as doc:
-            page = doc.load_page(0)
-            rect = page.rect
-            if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
-                self.get_author_old_version_1(page, rect)
-                self.get_author_old_version_2(page)
-            elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
-                clip_check_report = fitz.Rect(0, 0, rect.width, 150)
-                text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
-                if self.check_report(text_check_report):
-                    self.get_author_new_version_1(page, rect)
-                    self.get_author_new_version_2(page)
-        return self.check_author(self.author_1, self.author_2)
-
-    def get_summary_process(self):
-        with fitz.open(self.file_path) as doc:
-            page = doc.load_page(0)
-            rect = page.rect
-            if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
-                self.get_summary_old_version_1(page, rect)
-                self.get_summary_old_version_2(page)
-            elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
-                clip_check_report = fitz.Rect(0, 0, rect.width, 150)
-                text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
-                if self.check_report(text_check_report):
-                    self.get_summary_new_version_1(page, rect)
-                    self.get_summary_new_version_2(page)
-        return self.check_summary(self.summary_1, self.summary_2)
-
-
-    def check_source(self, doc):
+    def check_source(self, doc, page, rect):
         page_check_source = doc.load_page(-1)
         text_check_source = page_check_source.get_text()
-        if '永豐證券投資顧問股份有限公司' in text_check_source:
-            return 'old'
-        elif 'SinoPac Securities' in text_check_source:
-            return 'new'
-
-    def check_report(self, text_check_report):
-        if '個股聚焦' in text_check_report:
-            return True
+        check_source = ['中國信託金融控股', '中信投顧投資分析報告']
+        if any(keyword in text_check_source for keyword in check_source):
+            self.advisor = 'Ctbc'
+            text_check_report = text_check_source
+            self.check_report(page, rect, text_check_report)
     
-    def get_rating_old_version_1(self, page):
-        clip_old_version_1 = fitz.Rect(220, 80, 560, 140)
-        text_old_version_1 = page.get_text(clip=clip_old_version_1, sort=True).strip()
+    def check_report(self, page, rect, text_check_report):
+        if '個股報告' in text_check_report:
+            self.check_version(page, rect)
+     
+    def check_version(self, page, rect):
+        clip_check_version= fitz.Rect(370, 80, 450, 200)
+        text_check_version = page.get_text(clip=clip_check_version, sort=True).strip()
+        if '投資評等' in text_check_version:
+            self.get_rating_old_version_1(text_check_version)
+            self.get_rating_old_version_2(page)
+        else:
+            self.get_rating_new_version_1(page, rect)
+            self.get_rating_new_version_2(page)
+
+    def get_rating_old_version_1(self, text_check_version):
+        text_old_version_1 = text_check_version
         try:
-            text_old_version_1 = text_old_version_1.split('）')[1].strip()
-            self.rating_1 = text_old_version_1.split('\n')[1].strip()
+            text_old_version_1 = text_old_version_1.split('投資評等')[1].strip()
+            self.rating_1 = text_old_version_1.split('\n')[0].strip()
         except:
             self.rating_1 = 'NULL'
 
     def get_rating_old_version_2(self, page):
-        clip_old_version_2 = fitz.Rect(425, 90, 560, 130)
+        clip_old_version_2 = fitz.Rect(370, 120, 430, 150)
         self.rating_2 = page.get_text(clip=clip_old_version_2, sort=True).strip()
     
-    def get_rating_new_version_1(self, page):
-        clip_new_version_1 = fitz.Rect(0, 0, 200, 400)
+    def get_rating_new_version_1(self, page, rect):
+        clip_new_version_1 = fitz.Rect(200, 0, rect.width, 200)
         text_new_version_1 = page.get_text(clip=clip_new_version_1, sort=True).strip()
         try:
-            text_new_version_1 = text_new_version_1.split('投資建議')[1]
-            self.rating_1 = text_new_version_1.split('\n')[0].strip()
+            text_new_version_1 = text_new_version_1.split('評 等')[1]
+            self.rating_1 = text_new_version_1.split('\n')[1].strip()
         except:
             self.rating_1 = 'NULL'
-    
+        
     def get_rating_new_version_2(self, page):
-        clip_new_version_2 = fitz.Rect(75, 200, 120, 235)
-        text_new_version_2 = page.get_text(clip=clip_new_version_2, sort=True).strip()
-        self.rating_2 = text_new_version_2  
+        clip_new_version_2 = fitz.Rect(350, 115, 570, 200)
+        text_new_version_1 = page.get_text(clip=clip_new_version_2, sort=True).strip()
+        self.rating_2 = text_new_version_1.split('\n')[0].strip()
 
     def get_target_price_old_version_1(self, page):
         clip_old_version_1 = fitz.Rect(130, 100, 200, 160)
@@ -230,14 +178,8 @@ class Sinopac(Adviser):
             self.summary_2 = None
 
 if __name__ == '__main__' :
-    sample_file_root = r'./extract_pdf/extract_pdf/sample_file/1305_華夏_永豐_買進.pdf'
-    pdfReader = Sinopac(sample_file_root)
+    sample_file_root = r'./extract_pdf/extract_pdf/sample_file/1513_中興電_中信託_買進.pdf'
+    pdfReader = Ctbc(sample_file_root)
     rating = pdfReader.get_rating_process()
-    target_price = pdfReader.get_target_price_process()
-    author = pdfReader.get_author_process()
-    summary = pdfReader.get_summary_process()
     print(rating)
-    print(target_price)
-    print(author)
-    print(summary)
     pass
