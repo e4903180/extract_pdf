@@ -22,11 +22,11 @@ class Sinopac(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 self.get_rating_old_version_1(page)
                 self.get_rating_old_version_2(page)
             elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 clip_check_report = fitz.Rect(0, 0, rect.width, 150)
                 text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
                 if self.check_report(text_check_report):
@@ -39,11 +39,11 @@ class Sinopac(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 self.get_target_price_old_version_1(page)
                 self.get_target_price_old_version_2(page)
             elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 clip_check_report = fitz.Rect(0, 0, rect.width, 150)
                 text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
                 if self.check_report(text_check_report):
@@ -56,11 +56,11 @@ class Sinopac(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 self.get_author_old_version_1(page, rect)
                 self.get_author_old_version_2(page)
             elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 clip_check_report = fitz.Rect(0, 0, rect.width, 150)
                 text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
                 if self.check_report(text_check_report):
@@ -73,11 +73,11 @@ class Sinopac(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc)=='old':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 self.get_summary_old_version_1(page, rect)
                 self.get_summary_old_version_2(page)
             elif self.check_source(doc)=='new':
-                self.advisor = 'Sinopac'
+                self.advisor = self.__class__.__name__
                 clip_check_report = fitz.Rect(0, 0, rect.width, 150)
                 text_check_report = page.get_text(clip=clip_check_report, sort=True).strip()
                 if self.check_report(text_check_report):

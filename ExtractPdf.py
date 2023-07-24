@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import fitz
 
 class ExtractPdf(object):
     '''Extracts pdf's informations'''
@@ -14,10 +15,11 @@ class ExtractPdf(object):
             fix get tp, author process
         '''
         self.file_path = file_path
+        self.advisor = 'Unknown'
+        self.version = 'NULL'
         self.rating_1 = 'NULL'
         self.rating_2 = 'NULL'
         self.possible_rating = list()
-        self.advisor = 'Unknown'
         self.tp_1 = 'NULL'
         self.tp_2 = 'NULL'
         self.author_1 = 'NULL'
@@ -107,28 +109,35 @@ class ExtractPdf(object):
             return summary_2
         else:
             return 'NULL'   
-    
+        
+    def open(self):
+        doc = fitz.open(self.file_path)
+        page = doc.load_page(0)
+        return doc, page
+
+    def close(self, doc):
+        return doc.close()
     
 class Adviser(ExtractPdf):
     '''Extracts pdf's adviser'''
     def __init__(self, file_path):
         super().__init__(file_path)
 
-    @abstractmethod
-    def get_rating_process(self):
-        raise NotImplementedError("get_rating_process not implement")
+    # @abstractmethod
+    # def get_rating_process(self):
+    #     raise NotImplementedError("get_rating_process not implement")
 
-    @abstractmethod
-    def get_target_price_process(self):
-        raise NotImplementedError("get_target_price_process not implement")
+    # @abstractmethod
+    # def get_target_price_process(self):
+    #     raise NotImplementedError("get_target_price_process not implement")
 
-    @abstractmethod
-    def get_author_process(self):
-        raise NotImplementedError("get_author_process not implement")
+    # @abstractmethod
+    # def get_author_process(self):
+    #     raise NotImplementedError("get_author_process not implement")
 
-    @abstractmethod
-    def get_summary_process(self):
-        raise NotImplementedError("get_summary_process not implement")
+    # @abstractmethod
+    # def get_summary_process(self):
+    #     raise NotImplementedError("get_summary_process not implement")
 
 if __name__ == '__main__' :
     pass

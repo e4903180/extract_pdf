@@ -29,7 +29,7 @@ class Yuanta(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc):
-                self.advisor = 'Yuanta'
+                self.advisor = self.__class__.__name__
                 if self.check_report(doc, rect):
                     self.get_rating_version_1(page)
                     self.get_rating_version_2(page)
@@ -39,7 +39,7 @@ class Yuanta(Adviser):
         with fitz.open(self.file_path) as doc:
             page = doc.load_page(0)
             if self.check_source(doc):
-                self.advisor = 'Yuanta'
+                self.advisor = self.__class__.__name__
                 self.get_target_price_version_1(page)
                 self.get_target_price_version_2(page)
         return self.check_targrt_price(self.tp_1, self.tp_2)
@@ -49,7 +49,7 @@ class Yuanta(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc):
-                self.advisor = 'Yuanta'
+                self.advisor = self.__class__.__name__
                 self.get_author_version_1(page, rect)
                 self.get_author_version_2(page)
         return self.check_author(self.author_1, self.author_2)
@@ -59,7 +59,7 @@ class Yuanta(Adviser):
             page = doc.load_page(0)
             rect = page.rect
             if self.check_source(doc):
-                self.advisor = 'Yuanta'
+                self.advisor = self.__class__.__name__
                 self.get_summary_version_1(page, rect)
                 self.get_summary_version_2(page, rect)
         return self.check_summary(self.summary_1, self.summary_2)

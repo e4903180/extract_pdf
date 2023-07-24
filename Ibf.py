@@ -65,7 +65,7 @@ class Ibf(Adviser):
         clip_check_source = fitz.Rect(0, 0, rect.width, rect.height)
         text_check_source = page_check_source.get_text(clip=clip_check_source, sort=True)
         if '國票投顧所有' in text_check_source:
-            self.advisor = 'Ibf'
+            self.advisor = self.__class__.__name__
             return True
         else:
             return False
